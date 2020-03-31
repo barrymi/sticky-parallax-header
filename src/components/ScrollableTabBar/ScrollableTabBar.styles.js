@@ -3,11 +3,14 @@ import { StyleSheet } from 'react-native'
 export default StyleSheet.create({
   container: {
     width: '100%',
-    alignItems: 'center'
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start'
   },
   contentContainer: {
     alignItems: 'center',
-    paddingHorizontal: 20
+    // paddingHorizontal: 20
+    paddingRight: 16
   },
   tabContainer: {
     alignItems: 'center',
