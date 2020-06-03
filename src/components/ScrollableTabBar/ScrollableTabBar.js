@@ -24,7 +24,7 @@ class ScrollableTabBar extends React.PureComponent {
     }
   }
 
-  adjustPrevious = page => {
+  adjustPrevious = (page) => {
     const lastHidden = Math.floor(this.currentXPosition / (constants.deviceWidth * 0.3))
     if (page <= lastHidden) {
       this.currentXPosition = constants.deviceWidth * 0.3 * page
@@ -34,7 +34,7 @@ class ScrollableTabBar extends React.PureComponent {
     }
   }
 
-  adjustNext = page => {
+  adjustNext = (page) => {
     // eslint-disable-next-line max-len
     const invisibleX = constants.deviceWidth + this.currentXPosition - constants.deviceWidth * 0.3 * (page + 1)
 
@@ -46,7 +46,7 @@ class ScrollableTabBar extends React.PureComponent {
     }
   }
 
-  scrollToTab = page => {
+  scrollToTab = (page) => {
     const { tabs } = this.props
 
     if (tabs.length > 3) {
@@ -65,7 +65,7 @@ class ScrollableTabBar extends React.PureComponent {
     }
   }
 
-  goToPage = page => {
+  goToPage = (page) => {
     const { goToPage } = this.props
     this.scrollToTab(page)
 
@@ -83,7 +83,7 @@ class ScrollableTabBar extends React.PureComponent {
       tabTextContainerActiveStyle,
       tabsContainerBackgroundColor,
       tabWrapperStyle,
-      tabsContainerStyle
+      tabsContainerStyle,
       tabsStyle,
       tabsAnimation,
       tabsLeftAction
@@ -122,8 +122,8 @@ class ScrollableTabBar extends React.PureComponent {
           <ScrollView
             style={styles.nestedStyle}
             contentContainerStyle={[styles.contentContainer, tabsContainerStyle]}
-            ref={r => (this.scrollView = r)}
-            onScrollEndDrag={event => (this.currentXPosition = event.nativeEvent.contentOffset.x)}
+            ref={(r) => (this.scrollView = r)}
+            onScrollEndDrag={(event) => (this.currentXPosition = event.nativeEvent.contentOffset.x)}
             vertical={false}
             horizontal
             bounces={false}

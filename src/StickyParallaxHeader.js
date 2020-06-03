@@ -1,24 +1,6 @@
 import React, { Component } from 'react'
-import {
-  arrayOf,
-  bool,
-  func,
-  node,
-  number,
-  shape,
-  string,
-  oneOfType
-} from 'prop-types'
-import {
-  Dimensions,
-  ImageBackground,
-  ScrollView,
-  View,
-  Animated,
-  Easing,
-  ViewPropTypes,
-  Image
-} from 'react-native'
+import { arrayOf, bool, func, node, number, shape, string, oneOfType } from 'prop-types'
+import { Dimensions, ImageBackground, ScrollView, View, Animated, Easing, ViewPropTypes, Image } from 'react-native'
 import { ScrollableTabBar, ScrollableTabView } from './components'
 import { constants } from './constants'
 import styles from './styles'
@@ -130,13 +112,13 @@ class StickyParallaxHeader extends Component {
     return null
   }
 
-  onChangeTabHandler = tab => {
+  onChangeTabHandler = (tab) => {
     const { onChangeTab } = this.props
 
     return onChangeTab && onChangeTab(tab)
   }
 
-  onLayout = e => {
+  onLayout = (e) => {
     const { x, y, width, height } = e.nativeEvent.layout
     const { headerSize } = this.props
     const headerLayout = {
@@ -148,7 +130,7 @@ class StickyParallaxHeader extends Component {
     headerSize(headerLayout)
   }
 
-  goToPage = pageNumber => {
+  goToPage = (pageNumber) => {
     const { containerWidth, currentPage } = this.state
     const offset = pageNumber * containerWidth
     if (currentPage !== pageNumber) {
@@ -194,7 +176,7 @@ class StickyParallaxHeader extends Component {
             backgroundColor: isArray
               ? arrayHeaderStyle.backgroundColor
               : backgroundColor || headerStyle?.backgroundColor,
-            ...( transparentHeader && styles.transparentHeader )
+            ...(transparentHeader && styles.transparentHeader)
           })
         }
       >
@@ -203,7 +185,7 @@ class StickyParallaxHeader extends Component {
     )
   }
 
-  renderImageBackground = backgroundHeight => {
+  renderImageBackground = (backgroundHeight) => {
     const { backgroundImage, background } = this.props
 
     const AnimatedImageBackground = createAnimatedComponent(ImageBackground)
@@ -223,7 +205,7 @@ class StickyParallaxHeader extends Component {
     )
   }
 
-  renderPlainBackground = backgroundHeight => {
+  renderPlainBackground = (backgroundHeight) => {
     const { background } = this.props
 
     return (
@@ -248,7 +230,7 @@ class StickyParallaxHeader extends Component {
         style={{
           height: backgroundHeight,
           backgroundColor: tabsContainerBackgroundColor,
-          ...( backgroundImage && styles.transparentBackground )
+          ...(backgroundImage && styles.transparentBackground)
         }}
       >
         {foreground}
@@ -265,7 +247,7 @@ class StickyParallaxHeader extends Component {
       tabTextContainerActiveStyle,
       tabsContainerBackgroundColor,
       tabWrapperStyle,
-      tabsContainerStyle
+      tabsContainerStyle,
       tabsStyle,
       tabsAnimation,
       tabsLeftAction
@@ -284,7 +266,7 @@ class StickyParallaxHeader extends Component {
       tabsContainerBackgroundColor,
       tabs,
       tabWrapperStyle,
-      tabsContainerStyle
+      tabsContainerStyle,
       tabsStyle,
       tabsAnimation,
       tabsLeftAction
@@ -325,7 +307,7 @@ class StickyParallaxHeader extends Component {
           bouncesZoom
           decelerationRate="fast"
           nestedScrollEnabled
-          ref={c => {
+          ref={(c) => {
             this.scroll = c
           }}
           onScrollEndDrag={() => this.onScrollEndSnapToEdge(scrollHeight)}
@@ -344,7 +326,7 @@ class StickyParallaxHeader extends Component {
             ],
             {
               useNativeDriver: true,
-              listener: e => {
+              listener: (e) => {
                 this.isCloseToBottom(e.nativeEvent)
                 scrollEvent(e)
               }
@@ -381,7 +363,7 @@ class StickyParallaxHeader extends Component {
                   tabLabel={item.title}
                   key={item.title}
                   onLayout={this.setContentHeight}
-                  ref={c => {
+                  ref={(c) => {
                     this.tab = c
                   }}
                 >
@@ -419,10 +401,10 @@ StickyParallaxHeader.propTypes = {
   tabsContainerBackgroundColor: string,
   tabWrapperStyle: ViewPropTypes.style,
   tabsContainerStyle: ViewPropTypes.style,
-  snapStartThreshold: oneOfType([ bool, number]),
-  snapStopThreshold: oneOfType([ bool, number]),
-  snapValue: oneOfType([ bool, number]),
-  transparentHeader: bool
+  snapStartThreshold: oneOfType([bool, number]),
+  snapStopThreshold: oneOfType([bool, number]),
+  snapValue: oneOfType([bool, number]),
+  transparentHeader: bool,
   tabsStyle: shape({}),
   tabsAnimation: shape({}),
   tabsLeftAction: node
@@ -443,7 +425,7 @@ StickyParallaxHeader.defaultProps = {
   snapStartThreshold: false,
   snapStopThreshold: false,
   snapValue: false,
-  transparentHeader: false
+  transparentHeader: false,
   tabsStyle: {},
   tabsAnimation: {}
 }
