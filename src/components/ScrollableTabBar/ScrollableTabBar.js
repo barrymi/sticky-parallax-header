@@ -82,7 +82,7 @@ class ScrollableTabBar extends React.PureComponent {
       tabTextContainerStyle,
       tabTextContainerActiveStyle,
       tabsContainerBackgroundColor,
-      tabWrapperStyle,
+      tabsWrapperStyle,
       tabsContainerStyle,
       tabsStyle,
       tabsAnimation,
