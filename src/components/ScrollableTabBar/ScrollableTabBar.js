@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-return-assign */
 import React from 'react'
-import { Animated, Text, TouchableOpacity, View, ScrollView } from 'react-native'
+import { Animated, Text, TouchableOpacity, View, ScrollView, ViewPropTypes } from 'react-native'
 import { array, func, number, object, shape, string } from 'prop-types'
 import { constants } from '../../constants'
 import styles from './ScrollableTabBar.styles'
@@ -13,14 +13,14 @@ class ScrollableTabBar extends React.PureComponent {
     super(props)
     this.currentXPosition = 0
     this.state = {
-      tabUnderlineWidth: props.tabs.map(_ => 0)
+      tabUnderlineWidth: props.tabs.map((_) => 0)
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const { activeTab } = this.props
-    if (nextProps.activeTab !== activeTab) {
-      this.scrollToTab(nextProps.activeTab)
+    if (prevProps.activeTab !== activeTab) {
+      this.scrollToTab(activeTab)
     }
   }
 
@@ -82,7 +82,8 @@ class ScrollableTabBar extends React.PureComponent {
       tabTextContainerStyle,
       tabTextContainerActiveStyle,
       tabsContainerBackgroundColor,
-      tabsWrapperStyle,
+      tabWrapperStyle,
+      tabsContainerStyle
       tabsStyle,
       tabsAnimation,
       tabsLeftAction
@@ -120,7 +121,7 @@ class ScrollableTabBar extends React.PureComponent {
         <Animated.View style={tabsAnimation}>
           <ScrollView
             style={styles.nestedStyle}
-            contentContainerStyle={styles.contentContainer}
+            contentContainerStyle={[styles.contentContainer, tabsContainerStyle]}
             ref={r => (this.scrollView = r)}
             onScrollEndDrag={event => (this.currentXPosition = event.nativeEvent.contentOffset.x)}
             vertical={false}
@@ -194,6 +195,7 @@ ScrollableTabBar.propTypes = {
   tabTextContainerStyle: shape({}),
   tabTextContainerActiveStyle: shape({}),
   tabsContainerBackgroundColor: string,
-  tabsWrapperStyle: shape({})
+  tabWrapperStyle: ViewPropTypes.style,
+  tabsContainerStyle: ViewPropTypes.style
 }
 export default ScrollableTabBar

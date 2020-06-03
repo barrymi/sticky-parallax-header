@@ -1,10 +1,25 @@
 import React from 'react'
-import { Text, View, Image, StatusBar, Animated } from 'react-native'
-import { arrayOf, bool, number, shape, string, func } from 'prop-types'
+import {
+  Text,
+  View,
+  Image,
+  StatusBar,
+  Animated,
+  ViewPropTypes
+} from 'react-native'
+import {
+  arrayOf,
+  bool,
+  number,
+  shape,
+  string,
+  func
+} from 'prop-types'
 import StickyParallaxHeader from '../../index'
 import { constants, colors, sizes } from '../../constants'
 import styles from './TabbedHeader.styles'
 import RenderContent from './defaultProps/defaultProps'
+import isUndefined from 'lodash/isUndefined'
 
 const { event, ValueXY } = Animated
 export default class TabbedHeader extends React.Component {
@@ -29,7 +44,7 @@ export default class TabbedHeader extends React.Component {
     this.scrollY.y.removeListener()
   }
 
-  setHeaderSize = headerLayout => this.setState({ headerLayout })
+  setHeaderSize = (headerLayout) => this.setState({ headerLayout })
 
   scrollPosition = (value) => {
     const { headerLayout } = this.state
@@ -37,22 +52,35 @@ export default class TabbedHeader extends React.Component {
     return constants.scrollPosition(headerLayout.height, value)
   }
 
-  renderHeader = () => {
-    const { backgroundColor } = this.props
+  renderLogoHeader = () => {
+    const {
+      backgroundColor,
+      logo,
+      logoResizeMode,
+      logoStyle,
+      logoContainerStyle
+    } = this.props
 
     return (
-      <View style={[styles.headerWrapper, { backgroundColor }]}>
+      <View style={[logoContainerStyle, { backgroundColor }]}>
         <Image
-          resizeMode="contain"
-          source={require('../../assets/images/logo.png')}
-          style={styles.logo}
+          resizeMode={logoResizeMode}
+          source={logo}
+          style={logoStyle}
         />
       </View>
     )
   }
 
+  renderHeader = () => {
+    const { header } = this.props
+    const renderHeader = header ? header : this.renderLogoHeader
+    return renderHeader()
+  }
+
   renderForeground = (scrollY) => {
-    const { title } = this.props
+    const { title, titleStyle, foregroundImage } = this.props
+    const messageStyle = titleStyle || styles.message
     const startSize = constants.responsiveWidth(18)
     const endSize = constants.responsiveWidth(10)
     const [startImgFade, finishImgFade] = [this.scrollPosition(22), this.scrollPosition(27)]
@@ -75,16 +103,28 @@ export default class TabbedHeader extends React.Component {
       extrapolate: 'clamp'
     })
 
+    const renderImage = () => {
+      const logo = isUndefined(foregroundImage)
+      ? require('../../assets/images/photosPortraitMe.png')
+      : foregroundImage
+
+      if(foregroundImage !== null){
+        return (
+          <Animated.View style={{ opacity: imageOpacity }}>
+            <Animated.Image
+              source={logo}
+              style={[styles.profilePic, { width: imageSize, height: imageSize }]}
+            />
+          </Animated.View>
+        )
+      }
+    }
+
     return (
       <View style={styles.foreground}>
-        <Animated.View style={{ opacity: imageOpacity }}>
-          <Animated.Image
-            source={require('../../assets/images/photosPortraitMe.png')}
-            style={[styles.profilePic, { width: imageSize, height: imageSize }]}
-          />
-        </Animated.View>
+        {renderImage()}
         <Animated.View style={[styles.messageContainer, { opacity: titleOpacity }]}>
-          <Text style={styles.message}>{title}</Text>
+          <Text style={messageStyle}>{title}</Text>
         </Animated.View>
       </View>
     )
@@ -128,7 +168,14 @@ export default class TabbedHeader extends React.Component {
       backgroundImage,
       bounces,
       snapToEdge,
-      renderBody
+      scrollEvent,
+      renderBody,
+      tabTextStyle,
+      tabTextActiveStyle,
+      tabTextContainerStyle,
+      tabTextContainerActiveStyle,
+      tabWrapperStyle,
+      tabsContainerStyle
     } = this.props
 
     return (
@@ -139,18 +186,20 @@ export default class TabbedHeader extends React.Component {
           header={this.renderHeader()}
           deviceWidth={constants.deviceWidth}
           parallaxHeight={sizes.homeScreenParallaxHeader}
-          scrollEvent={event([{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }])}
+          scrollEvent={event([{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }], {useNativeDriver: false, listener: e => scrollEvent && scrollEvent(e)})}
           headerSize={this.setHeaderSize}
           headerHeight={headerHeight}
           tabs={tabs}
-          tabTextStyle={styles.tabText}
-          tabTextContainerStyle={styles.tabTextContainerStyle}
-          tabTextContainerActiveStyle={styles.tabTextContainerActiveStyle}
+          tabTextStyle={tabTextStyle}
+          tabTextActiveStyle={tabTextActiveStyle}
+          tabTextContainerStyle={tabTextContainerStyle}
+          tabTextContainerActiveStyle={tabTextContainerActiveStyle}
           tabsContainerBackgroundColor={backgroundColor}
-          tabsWrapperStyle={styles.tabsWrapper}
+          tabWrapperStyle={tabWrapperStyle}
           backgroundImage={backgroundImage}
           bounces={bounces}
           snapToEdge={snapToEdge}
+          tabsContainerStyle={tabsContainerStyle}
         >
           {renderBody('Popular Quizes')}
         </StickyParallaxHeader>
@@ -162,12 +211,26 @@ export default class TabbedHeader extends React.Component {
 TabbedHeader.propTypes = {
   backgroundColor: string,
   headerHeight: number,
-  backgroundImage: number,
+  backgroundImage: Image.propTypes.source,
   title: string,
   bounces: bool,
   snapToEdge: bool,
   tabs: arrayOf(shape({})),
-  renderBody: func
+  renderBody: func,
+  logo: number,
+  logoResizeMode: string,
+  logoStyle: ViewPropTypes.style,
+  logoContainerStyle: ViewPropTypes.style,
+  tabTextStyle: Text.propTypes.style,
+  tabTextActiveStyle: Text.propTypes.style,
+  tabTextContainerStyle: ViewPropTypes.style,
+  tabTextContainerActiveStyle: ViewPropTypes.style,
+  scrollEvent: func,
+  tabWrapperStyle: ViewPropTypes.style,
+  tabsContainerStyle: ViewPropTypes.style,
+  foregroundImage: Image.propTypes.source,
+  titleStyle: Text.propTypes.style,
+  header: func
 }
 
 TabbedHeader.defaultProps = {
@@ -177,6 +240,10 @@ TabbedHeader.defaultProps = {
   title: "Mornin' Mark! \nReady for a quiz?",
   bounces: true,
   snapToEdge: true,
+  logo: require('../../assets/images/logo.png'),
+  logoResizeMode: "contain",
+  logoStyle: styles.logo,
+  logoContainerStyle: styles.headerWrapper,
   renderBody: title => <RenderContent title={title} />,
   tabs: [
     {
@@ -195,5 +262,10 @@ TabbedHeader.defaultProps = {
       title: 'Project Management',
       content: <RenderContent title="Project Management" />
     }
-  ]
+  ],
+  tabTextStyle: styles.tabText,
+  tabTextActiveStyle: styles.tabText,
+  tabTextContainerStyle: styles.tabTextContainerStyle,
+  tabTextContainerActiveStyle: styles.tabTextContainerActiveStyle,
+  tabWrapperStyle: styles.tabsWrapper
 }

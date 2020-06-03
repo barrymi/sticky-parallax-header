@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, View, Image, TouchableOpacity, Animated, StatusBar } from 'react-native'
-import { func, string, number, bool } from 'prop-types'
+import { func, string, number, bool, oneOfType } from 'prop-types'
 import StickyParallaxHeader from '../../index'
 import { constants, sizes } from '../../constants'
 import styles from './AvatarHeader.styles'
@@ -8,6 +8,9 @@ import { Brandon } from '../../assets/data/cards'
 import RenderContent from './defaultProps/defaultProps'
 
 const { event, ValueXY } = Animated
+
+const finishImgPosition = 31
+const startImgPosition = 27
 
 class AvatarHeader extends React.Component {
   constructor(props) {
@@ -21,7 +24,7 @@ class AvatarHeader extends React.Component {
     this.scrollY = new ValueXY()
   }
 
-  setHeaderSize = headerLayout => this.setState({ headerLayout })
+  setHeaderSize = (headerLayout) => this.setState({ headerLayout })
 
   scrollPosition(value) {
     const {
@@ -31,7 +34,7 @@ class AvatarHeader extends React.Component {
     return constants.scrollPosition(height, value)
   }
 
-  renderHeader = () => {
+  renderAvatarHeader = () => {
     const {
       leftTopIconOnPress,
       leftTopIcon,
@@ -66,32 +69,39 @@ class AvatarHeader extends React.Component {
 
     return (
       <View style={[styles.headerWrapper, styles.userModalHeader, { backgroundColor }]}>
-        <TouchableOpacity hitSlop={sizes.hitSlop} onPress={leftTopIconOnPress}>
-          <Image style={styles.icon} resizeMode="contain" source={leftTopIcon} />
-        </TouchableOpacity>
         <View style={styles.headerMenu}>
+          <TouchableOpacity hitSlop={sizes.hitSlop} onPress={leftTopIconOnPress} style={styles.leftHeaderButton}>
+            <Image style={styles.icon} resizeMode="contain" source={leftTopIcon} />
+          </TouchableOpacity>
           <View style={styles.headerTitleContainer}>
             <Animated.Image source={image} style={[styles.headerPic, { opacity: imageOpacity }]} />
-            <Animated.Text style={[styles.headerTitle, { opacity: nameOpacity }]}>
+            <Animated.Text numberOfLines={1} style={[styles.headerTitle, { opacity: nameOpacity }]}>
               {title}
             </Animated.Text>
           </View>
+          <TouchableOpacity hitSlop={sizes.hitSlop} onPress={rightTopIconOnPress} style={styles.rightHeaderBtn}>
+            <Image style={styles.icon} resizeMode="contain" source={rightTopIcon} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity hitSlop={sizes.hitSlop} onPress={rightTopIconOnPress}>
-          <Image style={styles.icon} resizeMode="contain" source={rightTopIcon} />
-        </TouchableOpacity>
       </View>
     )
   }
 
-  renderForeground = () => {
+  renderHeader = () => {
+    const { header } = this.props
+    const renderHeader = header || this.renderAvatarHeader
+
+    return renderHeader()
+  }
+
+  renderAvatarForeground = () => {
     const { image, subtitle, title } = this.props
     const startSize = constants.responsiveWidth(18)
     const endSize = constants.responsiveWidth(12)
 
     const [startImgAnimation, finishImgAnimation] = [
-      this.scrollPosition(27),
-      this.scrollPosition(31)
+      this.scrollPosition(startImgPosition),
+      this.scrollPosition(finishImgPosition)
     ]
     const [startAuthorFade, finishAuthorFade] = [this.scrollPosition(40), this.scrollPosition(50)]
 
@@ -121,19 +131,12 @@ class AvatarHeader extends React.Component {
     return (
       <View style={styles.foreground}>
         <Animated.View style={{ opacity: imageOpacity }}>
-          <Animated.Image
-            source={image}
-            style={[styles.profilePic, { width: imageSize, height: imageSize }]}
-          />
+          <Animated.Image source={image} style={[styles.profilePic, { width: imageSize, height: imageSize }]} />
         </Animated.View>
-        <Animated.View
-          style={[
-            styles.messageContainer,
-            styles.userModalMessageContainer,
-            { opacity: authorOpacity }
-          ]}
-        >
-          <Text style={styles.message}>{title}</Text>
+        <Animated.View style={[styles.messageContainer, styles.userModalMessageContainer, { opacity: authorOpacity }]}>
+          <Text numberOfLines={2} style={[styles.message, styles.foregroundTitle]}>
+            {title}
+          </Text>
         </Animated.View>
         <Animated.View style={[styles.infoContainer, { opacity: aboutOpacity }]}>
           <Text style={styles.infoText}>{subtitle}</Text>
@@ -142,25 +145,33 @@ class AvatarHeader extends React.Component {
     )
   }
 
+  renderForeground = () => {
+    const { foreground } = this.props
+    const renderForeground = foreground || this.renderAvatarForeground
+
+    return renderForeground()
+  }
+
   renderBackground = () => {
     const {
       headerLayout: { height }
     } = this.state
     const { backgroundColor, hasBorderRadius } = this.props
 
-    const headerBorderRadius = hasBorderRadius
-      && this.scrollY.y.interpolate({
+    const headerBorderRadius = this.scrollY.y.interpolate({
         inputRange: [0, height],
         outputRange: [80, 0],
         extrapolate: 'extend'
       })
+
+    const borderBottomRightRadius = hasBorderRadius ? headerBorderRadius : 0
 
     return (
       <Animated.View
         style={[
           styles.background,
           {
-            borderBottomRightRadius: headerBorderRadius,
+            borderBottomRightRadius,
             backgroundColor
           }
         ]}
@@ -175,28 +186,41 @@ class AvatarHeader extends React.Component {
       renderBody,
       headerHeight,
       snapToEdge,
-      bounces
+      bounces,
+      scrollEvent,
+      parallaxHeight,
+      snapStartThreshold,
+      snapStopThreshold,
+      snapValue,
+      transparentHeader
     } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <StatusBar backgroundColor={backgroundColor} barStyle="light-content" />
         <StickyParallaxHeader
           foreground={this.renderForeground()}
           header={this.renderHeader()}
           deviceWidth={constants.deviceWidth}
-          parallaxHeight={sizes.userScreenParallaxHeader}
-          scrollEvent={event([{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }])}
+          scrollEvent={event([{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }], {
+            useNativeDriver: false,
+            listener: (e) => scrollEvent && scrollEvent(e)
+          })}
           headerSize={this.setHeaderSize}
           headerHeight={headerHeight}
           background={this.renderBackground()}
           backgroundImage={backgroundImage}
           bounces={bounces}
           snapToEdge={snapToEdge}
+          parallaxHeight={parallaxHeight}
+          transparentHeader={transparentHeader}
+          snapStartThreshold={snapStartThreshold}
+          snapStopThreshold={snapStopThreshold}
+          snapValue={snapValue}
         >
           {renderBody(Brandon)}
         </StickyParallaxHeader>
-      </React.Fragment>
+      </>
     )
   }
 }
@@ -215,7 +239,15 @@ AvatarHeader.propTypes = {
   title: string,
   subtitle: string,
   image: number,
-  renderBody: func
+  renderBody: func,
+  scrollEvent: func,
+  parallaxHeight: number,
+  foreground: func,
+  header: func,
+  snapStartThreshold: oneOfType([ bool, number]),
+  snapStopThreshold: oneOfType([ bool, number]),
+  snapValue: oneOfType([ bool, number]),
+  transparentHeader: bool
 }
 AvatarHeader.defaultProps = {
   leftTopIconOnPress: () => {},
@@ -228,10 +260,15 @@ AvatarHeader.defaultProps = {
   title: Brandon.author,
   subtitle: Brandon.about,
   image: Brandon.image,
-  renderBody: user => <RenderContent user={user} />,
+  renderBody: (user) => <RenderContent user={user} />,
   bounces: true,
   snapToEdge: true,
-  hasBorderRadius: true
+  hasBorderRadius: true,
+  parallaxHeight: sizes.userScreenParallaxHeader,
+  snapStartThreshold: false,
+  snapStopThreshold: false,
+  snapValue: false,
+  transparentHeader: false
 }
 
 export default AvatarHeader
