@@ -82,7 +82,7 @@ class ScrollableTabBar extends React.PureComponent {
       tabTextContainerStyle,
       tabTextContainerActiveStyle,
       tabsContainerBackgroundColor,
-      tabsWrapperStyle,
+      tabWrapperStyle,
       tabsContainerStyle,
       tabsStyle,
       tabsAnimation,
@@ -136,7 +136,7 @@ class ScrollableTabBar extends React.PureComponent {
                 <TouchableOpacity
                   key={tab.title}
                   accessible
-                  style={tabsWrapperStyle}
+                  style={tabWrapperStyle}
                   accessibilityLabel={tab.title}
                   accessibilityTraits="button"
                   activeOpacity={0.9}

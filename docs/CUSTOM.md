@@ -1,31 +1,31 @@
-# Custom Header 
+# Custom Header
 
 ## Custom Header Props
 
-| Property                         | Type                | Required   | Default   | Description                                                     | 
-| :------------------------------: | :-----------------: | :--------: | :-------: | :-------------------------------------------------------------: |
-| `background`                     | `node`              | No         | -         | This renders background component                               |
-| `backgroundImage`                | `number`            | No         | -         | This renders background image instead of background component   |
-| `backgroundColor`                | `string`            | Yes        |`""`       | Header background color                                         |
-| `bounces`                        | `bool`              | Yes        | `true`    | Bounces on swiping up                                           |
-| `children`                       | `node`              | No         | -         | This renders all the children inside the component              |
-| `foreground`                     | `node`              | Yes        | -         | This renders foreground component                               |
-| `header`                         | `node`              | Yes        | -         | This renders header component                                   |
-| `headerHeight`                   | `number`            | No         | `92`      | Sets height of folded header                                    |
-| `headerSize`                     | `func`              | No         | -         | Returns size of header for current device                       |
-| `initialPage`                    | `number`            | No         | `0`       | Set initial page of tab bar                                     |
-| `onChangeTab`                    | `func`              | No         | -         | Tab change event                                                |
-| `onEndReached`                   | `func`              | No         | -         | Tab change event                                                |
-| `parallaxHeight`                 | `number`            | No         | `0`       | Sets height of opened header                                    |
-| `snapToEdge`                     | `bool`              | No         | `true`    | Boolean to fire the function for snap To Edge                   |
-| `scrollEvent`                    | `func`              | No         | -         | Returns offset of header to apply custom animations             |
-| `tabs`                           | `arrayOf(string)`   | No         | -         | Array of tab names                                              |
-| `tabTextStyle`                   | `shape({})`         | No         | {}        | Text styles of tab                                              |
-| `tabTextActiveStyle`             | `shape({})`         | No         | {}        | Text styles of active tab                                       |
-| `tabTextContainerStyle`          | `shape({})`         | No         | {}        | Container styles of tab                                         |
-| `tabTextContainerActiveStyle`    | `shape({})`         | No         | {}        | Container styles of active tab                                  |
-| `tabsContainerBackgroundColor`   | `string`            | No         | -         | Background color of tab bar container                           |
-| `tabsWrapperStyle`               | `shape({})`         | No         | {}        | Tabs Wrapper styles                                             |
+|            Property            |       Type        | Required | Default |                          Description                          |
+| :----------------------------: | :---------------: | :------: | :-----: | :-----------------------------------------------------------: |
+|          `background`          |      `node`       |    No    |    -    |               This renders background component               |
+|       `backgroundImage`        |     `number`      |    No    |    -    | This renders background image instead of background component |
+|       `backgroundColor`        |     `string`      |   Yes    |  `""`   |                    Header background color                    |
+|           `bounces`            |      `bool`       |   Yes    | `true`  |                     Bounces on swiping up                     |
+|           `children`           |      `node`       |    No    |    -    |      This renders all the children inside the component       |
+|          `foreground`          |      `node`       |   Yes    |    -    |               This renders foreground component               |
+|            `header`            |      `node`       |   Yes    |    -    |                 This renders header component                 |
+|         `headerHeight`         |     `number`      |    No    |  `92`   |                 Sets height of folded header                  |
+|          `headerSize`          |      `func`       |    No    |    -    |           Returns size of header for current device           |
+|         `initialPage`          |     `number`      |    No    |   `0`   |                  Set initial page of tab bar                  |
+|         `onChangeTab`          |      `func`       |    No    |    -    |                       Tab change event                        |
+|         `onEndReached`         |      `func`       |    No    |    -    |                       Tab change event                        |
+|        `parallaxHeight`        |     `number`      |    No    |   `0`   |                 Sets height of opened header                  |
+|          `snapToEdge`          |      `bool`       |    No    | `true`  |         Boolean to fire the function for snap To Edge         |
+|         `scrollEvent`          |      `func`       |    No    |    -    |      Returns offset of header to apply custom animations      |
+|             `tabs`             | `arrayOf(string)` |    No    |    -    |                      Array of tab names                       |
+|         `tabTextStyle`         |    `shape({})`    |    No    |   {}    |                      Text styles of tab                       |
+|      `tabTextActiveStyle`      |    `shape({})`    |    No    |   {}    |                   Text styles of active tab                   |
+|    `tabTextContainerStyle`     |    `shape({})`    |    No    |   {}    |                    Container styles of tab                    |
+| `tabTextContainerActiveStyle`  |    `shape({})`    |    No    |   {}    |                Container styles of active tab                 |
+| `tabsContainerBackgroundColor` |     `string`      |    No    |    -    |             Background color of tab bar container             |
+|       `tabWrapperStyle`        |    `shape({})`    |    No    |   {}    |                      Tabs Wrapper styles                      |
 
 <h1 id="Usage">Usage</h1>
 
@@ -171,13 +171,13 @@ class TabScreen extends React.Component {
         tabTextContainerStyle={styles.tabTextContainerStyle}
         tabTextContainerActiveStyle={styles.tabTextContainerActiveStyle}
         tabsContainerBackgroundColor={'green'}
-        tabsWrapperStyle={styles.tabsWrapper}
-      >
-      </StickyParallaxHeader>
+        tabWrapperStyle={styles.tabsWrapper}
+      ></StickyParallaxHeader>
     )
   }
 }
 ```
 
 ## Tips
+
 In order to nest scrollable component use `scrollEnabled={false}` on it and move all the logic to the header eg. by using `onEndReached` prop.
